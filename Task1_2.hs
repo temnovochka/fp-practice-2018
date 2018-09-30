@@ -3,17 +3,25 @@ module Task1_2 where
 import Todo(todo)
 
 factorial x = product [1..x]
-sumElem x n m = (-1)**n * x**(m+1) / factorial (m+1)
-formula x n max s flag | n > max = s
-                       | otherwise = formula x (n+1) max (s + sumElem x n (if flag then (2*n) else (2*n-1))) flag
+teylorParam f n = if f then (2*n+1) else (2*n)
+sumElem x n m = (-1)**n * x**m / factorial m
+formula x n eps nterm s flag | abs (nterm) <= eps = s
+                             | otherwise = formula x (n+1) eps (sumElem x n (teylorParam flag n)) (s + nterm) flag
+
+normalize :: Double -> Double -> Double
+normParam s = if s < 0 then 1 else 2
+normalize x s | x >= s && x <= s+pi = x
+              | x > s+pi && x < s+2*pi = normParam s * pi - x
+              | x >= s+2*pi = normalize (x - 2*pi) s
+              | otherwise = normalize (x + 2*pi) s -- x < s
 
 -- синус числа (формула Тейлора)
 sin :: Double -> Double
-sin x = formula x 0 30 0 True
+sin x = formula (normalize x (-pi/2)) 0 1e-20 1 (-1) True
 
 -- косинус числа (формула Тейлора)
 cos :: Double -> Double
-cos x = formula x 0 30 0 False
+cos x = formula (normalize x 0) 0 1e-20 1 (-1) False
 
 -- наибольший общий делитель двух чисел
 gcd' :: Integer -> Integer -> Integer -> Integer
@@ -73,8 +81,11 @@ magicSum = sum.map someMagic
 
 sum1 points = magicSum (zip (iks points) ((tail.ygrek) points))
 sum2 points = magicSum (zip ((tail.iks) points) (ygrek points))
+term1 points = sum1 points - sum2 points
+term2 points = (snd.head) points * (fst.last) points
+term3 points = (fst.head) points * (snd.last) points
 
-shapeArea points = 0.5 * abs (sum1 points + (snd.head) points * (fst.last) points - sum2 points - (fst.head) points * (snd.last) points)
+shapeArea points = 0.5 * abs (term1 points + term2 points - term3 points)
 
 -- треугольник задан своими координатами.
 -- функция должна вернуть 

@@ -35,3 +35,39 @@ evaluate_2 = evaluate replace_var_2
 
 myAwesomePoints = [(2, 4), (3, -8), (1, 2), (2, 4)]
 squareOfMyAwesomeFigureMadeWithAwesomePoints = shapeArea myAwesomePoints
+
+
+sinorm = [normalize 0 (-pi/2) == 0,
+          normalize pi (-pi/2) == 0,
+          normalize (3*pi/2) (-pi/2) == -pi/2,
+          normalize (pi/2) (-pi/2) == pi/2,
+          normalize (2*pi) (-pi/2) == 0,
+          normalize (3*pi/4) (-pi/2) == pi/4,
+          normalize (5*pi/4) (-pi/2) == -pi/4]
+
+conorm = [normalize 0 0 == 0,
+          normalize pi 0 == pi,
+          normalize (3*pi/2) 0 == pi/2,
+          normalize (pi/2) 0 == pi/2,
+          normalize (2*pi) 0 == 0,
+          normalize (3*pi/4) 0 == 3*pi/4,
+          normalize (5*pi/4) 0 == 3*pi/4]
+
+testTeylorSin x = abs (Task1_2.sin x - Prelude.sin x) <= 1e-14
+testTeylorCos x = abs (Task1_2.cos x - Prelude.cos x) <= 1e-14
+
+sinTest = [testTeylorSin 0,
+           testTeylorSin pi,
+           testTeylorSin (pi/2),
+           testTeylorSin (100*pi),
+           testTeylorSin (3*pi/4),
+           testTeylorSin (5*pi/4),
+           testTeylorSin (pi/6)]
+
+cosTest = [testTeylorCos 0,
+           testTeylorCos pi,
+           testTeylorCos (pi/2),
+           testTeylorCos (100*pi),
+           testTeylorCos (3*pi/4),
+           testTeylorCos (5*pi/4),
+           testTeylorCos (pi/6)]
