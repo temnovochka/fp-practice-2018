@@ -4,16 +4,16 @@ import Todo(todo)
 
 factorial x = product [1..x]
 teylorParam f n = if f then (2*n+1) else (2*n)
-sumElem x n m = (-1)**n * x**m / factorial m
+sumElem x n m = (-1)**n*x**m/factorial m
 formula x n eps nterm s flag | abs (nterm) <= eps = s
-                             | otherwise = formula x (n+1) eps (sumElem x n (teylorParam flag n)) (s + nterm) flag
+                             | otherwise = formula x (n+1) eps (sumElem x n (teylorParam flag n)) (s+nterm) flag
 
 normalize :: Double -> Double -> Double
 normParam s = if s < 0 then 1 else 2
 normalize x s | x >= s && x <= s+pi = x
-              | x > s+pi && x < s+2*pi = normParam s * pi - x
-              | x >= s+2*pi = normalize (x - 2*pi) s
-              | otherwise = normalize (x + 2*pi) s -- x < s
+              | x > s+pi && x < s+2*pi = (normParam s)*pi-x
+              | x >= s+2*pi = normalize (x-2*pi) s
+              | otherwise = normalize (x+2*pi) s -- x < s
 
 -- синус числа (формула Тейлора)
 sin :: Double -> Double
