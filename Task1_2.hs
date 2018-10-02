@@ -52,8 +52,8 @@ isDateCorrect day month year = todo
 -- готовые функции и плавающую арифметику использовать нельзя
 pow :: Integer -> Integer -> Integer
 pow x y | y == 0 = 1
-        | mod y 2 == 1 = (pow x (y-1)) * x
-        | otherwise = let k = (pow x (div y 2)) in k * k
+        | mod y 2 == 1 = (pow x (y-1))*x
+        | otherwise = let k = (pow x (div y 2)) in k*k
 
 
 -- является ли данное число простым?
