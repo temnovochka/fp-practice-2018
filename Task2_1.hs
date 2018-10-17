@@ -27,7 +27,7 @@ remove :: Integer -> TreeMap v -> TreeMap v
 remove i t = todo
 
 -- Поиск ближайшего снизу ключа относительно заданного
-nearestLE :: Integer -> TreeMap v -> (k, v)
+nearestLE :: Integer -> TreeMap v -> (Integer, v)
 nearestLE i t = todo
 
 -- Построение дерева из списка пар

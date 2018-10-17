@@ -47,7 +47,7 @@ elem :: (Eq a) => a -> [a] -> Bool
 elem = todo
 
 -- Список чисел в диапазоне [from, to) с шагом step
-rangeTo :: Integer -> Integer -> Integer -> Integer
+rangeTo :: Integer -> Integer -> Integer -> [Integer]
 rangeTo from to step = todo
 
 -- Конкатенация двух списков
