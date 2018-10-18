@@ -6,13 +6,21 @@ import Prelude hiding (foldl, foldr, unfoldr, map, concatMap,
     filter, maxBy, minBy, reverse, sum, product, elem)
 
 foldl :: (b -> a -> b) -> b -> [a] -> b
-foldl = todo
+foldl fun s (h:[]) = fun s h
+foldl fun s (h:t) = foldl fun (fun s h) t
 
 foldr :: (a -> b -> b) -> b -> [a] -> b
-foldr = todo
+foldr fun s (h:[]) = fun h s
+foldr fun s (h:t) = fun h (foldr fun s t)
+
+unfoldr' :: (b -> Maybe (a, b)) -> b -> [a] -> [a]
+unfoldr' fun e lst =
+    let res = fun e in
+    case res of Nothing -> lst
+                Just(a, b) -> unfoldr' fun b (a:lst)
 
 unfoldr :: (b -> Maybe (a, b)) -> b -> [a]
-unfoldr = todo
+unfoldr fun e = reverse (unfoldr' fun e [])
 
 -- Сумма всех элементов списка (пример)
 sum :: [Integer] -> Integer
@@ -24,37 +32,57 @@ reverse lst = foldl f [] lst where f t h = h:t
 
 -- Отображение элементов списка
 map :: (a -> b) -> [a] -> [b]
-map = todo
+map fun lst = foldr (f fun) [] lst where f fun h t = (fun h):t
 
 -- Произведение всех элементов списка
 product :: [Integer] -> Integer
-product = todo
+product lst | lst == [] = 0
+            | otherwise = foldr (*) 1 lst
 
 -- Выделение из списка Maybe всех существующих значений
 catMaybes :: [Maybe a] -> [a]
-catMaybes = todo
+catMaybes lst = foldr f [] lst where f h r = case h of Nothing -> r
+                                                       Just a -> a:r
+
+magic_h :: (Integer, [a]) -> [a] -> (Integer, [a])
+magic_h (n, res) lst = ((n+1), res ++ [lst !! (fromInteger n)])
 
 -- Диагональ матрицы
 diagonal :: [[a]] -> [a]
-diagonal = todo
+diagonal m = snd (foldl magic_h (0, []) m)
+
+dont_like f a res = case (f a) of True -> res
+                                  False -> a:res
 
 -- Фильтр для всех элементов, не соответствующих предикату
 filterNot :: (a -> Bool) -> [a] -> [a]
-filterNot = todo
+filterNot f lst = foldr (dont_like f) [] lst
+
+poisk e lst r | lst == e = True
+              | otherwise = r
 
 -- Поиск элемента в списке
 elem :: (Eq a) => a -> [a] -> Bool
-elem = todo
+elem e lst = foldr (poisk e) False lst
+
+-- magic_awesome_range :: Integer -> Integer -> Integer -> Maybe(a, a)
+magic_awesome_range step to from | from >= to = Nothing
+                                 | otherwise = Just(from, (from+step))
 
 -- Список чисел в диапазоне [from, to) с шагом step
 rangeTo :: Integer -> Integer -> Integer -> [Integer]
-rangeTo from to step = todo
+rangeTo from to step = unfoldr (magic_awesome_range step to) from
 
 -- Конкатенация двух списков
 append :: [a] -> [a] -> [a]
-append = todo
+append a [] = a
+append a b = foldr fall_down b a where fall_down a b = a:b
+
+a_lot_of_magic _ ([], 0) l = ([[l]], 1)
+a_lot_of_magic n ((h:t), numelem) l | numelem < n = ((append h [l]):t, (numelem+1))
+                                    | otherwise = ([l]:h:t, 1)
 
 -- Разбиение списка lst на куски размером n
 -- (последний кусок может быть меньше)
 groups :: [a] -> Integer -> [[a]]
-groups lst n = todo
+groups lst n = reverse $ fst(foldl (a_lot_of_magic n) ([], 0) lst)
