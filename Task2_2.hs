@@ -44,8 +44,13 @@ catMaybes :: [Maybe a] -> [a]
 catMaybes lst = foldr f [] lst where f h r = case h of Nothing -> r
                                                        Just a -> a:r
 
+luuuuuu :: [a] -> Integer
+luuuuuu lst = foldl len 0 lst where len n _ = 1 + n
+
 magicH :: (Integer, [a]) -> [a] -> (Integer, [a])
-magicH (n, res) lst = ((n + 1), res ++ [lst !! (fromInteger n)])
+magicH (n, res) lst 
+    | (luuuuuu lst) <= n = (n, res)
+    | otherwise = ((n + 1), res ++ [lst !! (fromInteger n)])
 
 -- Диагональ матрицы
 diagonal :: [[a]] -> [a]

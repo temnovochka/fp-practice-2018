@@ -84,6 +84,26 @@ listFromTree' (Both k v l r) = (listFromTree' l) ++ [(k, v)] ++ (listFromTree' r
 listFromTree :: TreeMap v -> [(Integer, v)]
 listFromTree t = listFromTree' t
 
+magicCiferka _ Pusto n = error "404 not found ciferka"
+magicCiferka _ (Both k v Pusto Pusto) n = n
+magicCiferka m (Both k v Pusto r) n 
+    | m == k = n
+    | otherwise = magicCiferka m r (n + 1)
+magicCiferka m (Both k v l Pusto) n = magicCiferka m l (n + 1)
+magicCiferka m (Both k v l r) n 
+    | m == k = magicCiferka m l (n + 1)
+    | otherwise = (magicCiferka m l 1) + (magicCiferka m r 1) + n
+
+specialEditionMagic Pusto _ _ = error "404 not found tree"
+specialEditionMagic t @(Both k v l r) i mn
+    | i == m = (k, v)
+    | i > m = case r of Pusto -> error "404 not found right"
+                        otherwise -> specialEditionMagic r i (m + 1)
+    | i < m = specialEditionMagic l i mn
+    where m = magicCiferka k t mn
+
+kMeanCheck i t = (listFromTree t) !! (fromInteger i)
+
 -- Поиск k-той порядковой статистики дерева 
 kMean :: Integer -> TreeMap v -> (Integer, v)
-kMean i t = last (take (fromInteger $ i + 1) (listFromTree t))
+kMean i t = specialEditionMagic t i 0
