@@ -47,26 +47,28 @@ insert (k, v) t = insert' t (k, v)
 -- Удаление элемента по ключу
 remove :: Integer -> TreeMap v -> TreeMap v
 
-insert_into_left Pusto lt = lt
-insert_into_left (Both k v Pusto r) lt = Both k v lt r
-insert_into_left (Both k v l r) lt = Both k v (insert_into_left l lt) r
+insertIntoLeft Pusto lt = lt
+insertIntoLeft (Both k v Pusto r) lt = Both k v lt r
+insertIntoLeft (Both k v l r) lt = Both k v (insertIntoLeft l lt) r
 
 remove' Pusto _ = Pusto
-remove' (Both k v l r) i | i == k = insert_into_left r l
+remove' (Both k v l r) i | i == k = insertIntoLeft r l
                          | i > k = Both k v l (remove' r i)
                          | i < k = Both k v (remove' l i) r
 
 remove i t = remove' t i
 
+nearestLE' :: TreeMap a -> Integer -> (Integer, a)
+nearestLE' Pusto _ = error "404 not found"
+nearestLE' (Both key value l r) i 
+    | i == key = (key, value)
+    | i < key = nearestLE' l i
+    | i > key = case r of (Both k v _ _) | (i == k) -> (k, v)
+                          (Both k v _ _) | (i /= k) -> nearestLE' r i
+                          otherwise -> (key, value)
+
 -- Поиск ближайшего снизу ключа относительно заданного
 nearestLE :: Integer -> TreeMap v -> (Integer, v)
-
-nearestLE' Pusto _ = error "404 not found"
-nearestLE' (Both key v l r) i | i == key = case l of Both k v _ _ -> (k, v)
-                                                     otherwise -> error "404 not found"
-                              | i > key = nearestLE' r i
-                              | i < key = nearestLE' l i
-
 nearestLE i t = nearestLE' t i
 
 -- Построение дерева из списка пар
@@ -84,4 +86,4 @@ listFromTree t = listFromTree' t
 
 -- Поиск k-той порядковой статистики дерева 
 kMean :: Integer -> TreeMap v -> (Integer, v)
-kMean i t = (listFromTree t) !! (fromInteger i)
+kMean i t = last (take (fromInteger $ i + 1) (listFromTree t))

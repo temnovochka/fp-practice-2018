@@ -44,19 +44,19 @@ catMaybes :: [Maybe a] -> [a]
 catMaybes lst = foldr f [] lst where f h r = case h of Nothing -> r
                                                        Just a -> a:r
 
-magic_h :: (Integer, [a]) -> [a] -> (Integer, [a])
-magic_h (n, res) lst = ((n+1), res ++ [lst !! (fromInteger n)])
+magicH :: (Integer, [a]) -> [a] -> (Integer, [a])
+magicH (n, res) lst = ((n + 1), res ++ [lst !! (fromInteger n)])
 
 -- Диагональ матрицы
 diagonal :: [[a]] -> [a]
-diagonal m = snd (foldl magic_h (0, []) m)
+diagonal m = snd (foldl magicH (0, []) m)
 
-dont_like f a res = case (f a) of True -> res
-                                  False -> a:res
+dontLike f a res = case (f a) of True -> res
+                                 False -> a:res
 
 -- Фильтр для всех элементов, не соответствующих предикату
 filterNot :: (a -> Bool) -> [a] -> [a]
-filterNot f lst = foldr (dont_like f) [] lst
+filterNot f lst = foldr (dontLike f) [] lst
 
 poisk e lst r | lst == e = True
               | otherwise = r
@@ -65,24 +65,23 @@ poisk e lst r | lst == e = True
 elem :: (Eq a) => a -> [a] -> Bool
 elem e lst = foldr (poisk e) False lst
 
--- magic_awesome_range :: Integer -> Integer -> Integer -> Maybe(a, a)
-magic_awesome_range step to from | from >= to = Nothing
-                                 | otherwise = Just(from, (from+step))
+magicAwesomeRange step to from | from >= to = Nothing
+                               | otherwise = Just(from, (from + step))
 
 -- Список чисел в диапазоне [from, to) с шагом step
 rangeTo :: Integer -> Integer -> Integer -> [Integer]
-rangeTo from to step = unfoldr (magic_awesome_range step to) from
+rangeTo from to step = unfoldr (magicAwesomeRange step to) from
 
 -- Конкатенация двух списков
 append :: [a] -> [a] -> [a]
 append a [] = a
 append a b = foldr fall_down b a where fall_down a b = a:b
 
-a_lot_of_magic _ ([], 0) l = ([[l]], 1)
-a_lot_of_magic n ((h:t), numelem) l | numelem < n = ((append h [l]):t, (numelem+1))
-                                    | otherwise = ([l]:h:t, 1)
+aLotOfMagic _ ([], 0) l = ([[l]], 1)
+aLotOfMagic n ((h:t), numelem) l | numelem < n = ((append h [l]):t, (numelem + 1))
+                                 | otherwise = ([l]:h:t, 1)
 
 -- Разбиение списка lst на куски размером n
 -- (последний кусок может быть меньше)
 groups :: [a] -> Integer -> [[a]]
-groups lst n = reverse $ fst(foldl (a_lot_of_magic n) ([], 0) lst)
+groups lst n = reverse $ fst(foldl (aLotOfMagic n) ([], 0) lst)
