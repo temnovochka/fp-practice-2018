@@ -27,7 +27,6 @@ magicShow (RCons r a) = show a ++ ", " ++ magicShow r
 instance Show a => Show (ReverseList a) where
     show RNil = "[]"
     show rl = "[" ++ magicShow rl ++ "]"
-    -- show (RCons r a) = "[" ++ show a ++ ", " ++ show r ++ "]"
 
 instance Eq a => Eq (ReverseList a) where
     (==) RNil RNil = True
