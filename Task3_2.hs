@@ -12,12 +12,12 @@ rlistToList RNil = []
 rlistToList (RCons RNil a) = a : []
 rlistToList (RCons r a) = (rlistToList r) ++ [a]
 
-make_reverse :: ReverseList a -> a -> ReverseList a
-make_reverse rl l = RCons rl l
+makeReverse :: ReverseList a -> a -> ReverseList a
+makeReverse rl l = RCons rl l
 
 listToRList :: [a] -> ReverseList a
 listToRList [] = RNil
-listToRList lst = foldl make_reverse RNil lst
+listToRList lst = foldl makeReverse RNil lst
 
 -- Реализуйте классы Eq, Ord, Show, Monoid, Functor
 
