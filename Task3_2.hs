@@ -21,9 +21,13 @@ listToRList lst = foldl make_reverse RNil lst
 
 -- Реализуйте классы Eq, Ord, Show, Monoid, Functor
 
+magicShow (RCons RNil a) = show a
+magicShow (RCons r a) = show a ++ ", " ++ magicShow r
+
 instance Show a => Show (ReverseList a) where
     show RNil = "[]"
-    show (RCons r a) = "[" ++ show a ++ ", " ++ show r ++ "]"
+    show rl = "[" ++ magicShow rl ++ "]"
+    -- show (RCons r a) = "[" ++ show a ++ ", " ++ show r ++ "]"
 
 instance Eq a => Eq (ReverseList a) where
     (==) RNil RNil = True

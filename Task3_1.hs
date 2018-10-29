@@ -9,33 +9,29 @@ instance Show WeirdPeanoNumber where
     show (Succ a) = "Succ (" ++ show a ++ ")"
     show (Pred a) = "Pred (" ++ show a ++ ")"
 
-magicCheck sa pa sb pb f
+-- magicCheck :: (Integer, Integer) -> (Integer, Integer) -> Integer -> Bool
+magicCheck (sa, pa) (sb, pb) f
     | f == 0 = (sa - pa) == (sb - pb)
     | f == 1 = (sa - pa) <= (sb - pb)
     | otherwise = error "404"
 
-count Zero sa pa Zero sb pb f = magicCheck sa pa sb pb f
-
-count a @(Succ c) sa pa b sb pb f = checkB c (sa + 1) pa b sb pb f
-count a @(Pred c) sa pa b sb pb f = checkB c sa (pa + 1) b sb pb f
-count a @(Zero) sa pa b sb pb f = checkB a sa pa b sb pb f
-
-checkB c sa pa b sb pb f = 
-    case b of Succ d -> count c sa pa d (sb + 1) pb f
-              Pred d -> count c sa pa d sb (pb + 1) f
-              Zero -> count c sa pa b sb pb f
+-- count :: WeirdPeanoNumber -> Integer -> Integer -> (Integer, Integer)
+count b sb pb = 
+    case b of Succ d -> count d (sb + 1) pb
+              Pred d -> count d sb (pb + 1)
+              Zero -> (sb, pb)
 
 instance Eq WeirdPeanoNumber where
     (==) Zero Zero = True
     (==) (Succ a) (Succ b) = (==) a b
     (==) (Pred a) (Pred b) = (==) a b
-    (==) a b = count a 0 0 b 0 0 0
+    (==) a b = magicCheck (count a 0 0) (count b 0 0) 0
 
 instance Ord WeirdPeanoNumber where
     (<=) Zero Zero = True
     (<=) (Succ a) (Succ b) = (<=) a b
     (<=) (Pred a) (Pred b) = (<=) a b
-    (<=) a b = count a 0 0 b 0 0 1
+    (<=) a b = magicCheck (count a 0 0) (count b 0 0) 1
 
 countSP :: WeirdPeanoNumber -> (Integer, Integer) -> (Integer, Integer)
 countSP Zero (s, p) = (s, p)
