@@ -15,28 +15,22 @@ magicCheck (sa, pa) (sb, pb) f
     | f == 1 = (sa - pa) <= (sb - pb)
     | otherwise = error "404"
 
-count :: WeirdPeanoNumber -> Integer -> Integer -> (Integer, Integer)
-count b sb pb = 
-    case b of Succ d -> count d (sb + 1) pb
-              Pred d -> count d sb (pb + 1)
-              Zero -> (sb, pb)
+countSP :: WeirdPeanoNumber -> (Integer, Integer) -> (Integer, Integer)
+countSP Zero (s, p) = (s, p)
+countSP (Succ a) (s, p) = countSP a ((s + 1), p)
+countSP (Pred a) (s, p) = countSP a (s, (p + 1))
 
 instance Eq WeirdPeanoNumber where
     (==) Zero Zero = True
     (==) (Succ a) (Succ b) = (==) a b
     (==) (Pred a) (Pred b) = (==) a b
-    (==) a b = magicCheck (count a 0 0) (count b 0 0) 0
+    (==) a b = magicCheck (countSP a (0, 0)) (countSP b (0, 0)) 0
 
 instance Ord WeirdPeanoNumber where
     (<=) Zero Zero = True
     (<=) (Succ a) (Succ b) = (<=) a b
     (<=) (Pred a) (Pred b) = (<=) a b
-    (<=) a b = magicCheck (count a 0 0) (count b 0 0) 1
-
-countSP :: WeirdPeanoNumber -> (Integer, Integer) -> (Integer, Integer)
-countSP Zero (s, p) = (s, p)
-countSP (Succ a) (s, p) = countSP a ((s + 1), p)
-countSP (Pred a) (s, p) = countSP a (s, (p + 1))
+    (<=) a b = magicCheck (countSP a (0, 0)) (countSP b (0, 0)) 1
 
 optimizeSP (s, p)
     | s > p = ((s - p), 1)
