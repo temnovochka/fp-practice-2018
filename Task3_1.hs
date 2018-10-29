@@ -9,13 +9,13 @@ instance Show WeirdPeanoNumber where
     show (Succ a) = "Succ (" ++ show a ++ ")"
     show (Pred a) = "Pred (" ++ show a ++ ")"
 
--- magicCheck :: (Integer, Integer) -> (Integer, Integer) -> Integer -> Bool
+magicCheck :: (Integer, Integer) -> (Integer, Integer) -> Integer -> Bool
 magicCheck (sa, pa) (sb, pb) f
     | f == 0 = (sa - pa) == (sb - pb)
     | f == 1 = (sa - pa) <= (sb - pb)
     | otherwise = error "404"
 
--- count :: WeirdPeanoNumber -> Integer -> Integer -> (Integer, Integer)
+count :: WeirdPeanoNumber -> Integer -> Integer -> (Integer, Integer)
 count b sb pb = 
     case b of Succ d -> count d (sb + 1) pb
               Pred d -> count d sb (pb + 1)
