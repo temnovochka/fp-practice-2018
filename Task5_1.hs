@@ -30,10 +30,37 @@ list2dlist' left (h: t) =
     in rec
 
 index :: DList a -> Int -> a
-index = todo
+index DNil _ = error "404"
+index (DCons l c r) i | i == 0 = c
+                      | otherwise = index r $ i-1
 
 insertAt :: DList a -> Int -> a -> DList a
-insertAt list index value = todo
+insertAt list index value = append list value DNil index
 
 removeAt :: DList a -> Int -> DList a
-removeAt list index = todo
+removeAt list index = remove list DNil index
+
+remove DNil _ _ = DNil
+remove list @(DCons _ _ DNil) _ ind
+    | ind == 0 = DNil
+    | otherwise = list
+remove list @(DCons l c r @(DCons _ cr rr)) super ind
+    | ind == 0 = end
+    | otherwise = mya
+    where mya = DCons super c (remove r mya $ ind-1) 
+          end = DCons l cr (makeLeft rr end)
+
+append list @(DNil) el super ind
+    | ind == 0 = end
+    | otherwise = error "404"
+    where end = DCons super el (makeLeft list end)
+append list @(DCons l c r) el super ind
+    | ind == 0 = end
+    | otherwise = mya
+    where mya = DCons super c (append r el mya $ ind-1)
+          end = DCons super el (makeLeft list end)
+
+makeLeft DNil _ = DNil
+makeLeft (DCons l c r) left = 
+    let new = DCons left c (makeLeft r new)
+    in new
