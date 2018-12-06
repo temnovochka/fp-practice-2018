@@ -32,18 +32,18 @@ instance Monad Stream where
     ss >>= f = sflatten (f <$> ss)
 
 normalize :: Double -> Double
-normalize x | x >= (-pi/2) && x <= (pi/2) = x
-            | x > (pi/2) && x < (3*pi/2) = pi-x
-            | x >= (3*pi/2) = normalize $ x-2*pi
-            | otherwise = normalize $ x+2*pi
+normalize x | x >= (-pi / 2) && x <= (pi / 2) = x
+            | x > (pi / 2) && x < (3 * pi / 2) = pi - x
+            | x >= (3 * pi / 2) = normalize $ x - 2 * pi
+            | otherwise = normalize $ x + 2 * pi
 
 factorial x = product [1..x]
 
-sinPrecisions' x n sum = Cons elem $ sinPrecisions' x (n+1) elem
-    where elem = sum+(-1)**n*x**(2*n+1)/factorial (2*n+1)
+sinPrecisions' x n sum = Cons elem $ sinPrecisions' x (n + 1) elem
+    where elem = sum + (-1) ** n * x ** (2 * n + 1) / factorial (2 * n + 1)
 
-ePrecisions' n sum = Cons elem $ ePrecisions' (n+1) elem
-    where elem = sum+1/factorial n
+ePrecisions' n sum = Cons elem $ ePrecisions' (n + 1) elem
+    where elem = sum + 1 / factorial n
 
 sinPrecisions :: Double -> Stream Double
 sinPrecisions x = sinPrecisions' (normalize x) 0 0
