@@ -12,6 +12,11 @@ find (Branch v l r p) a
     | a > v = find r a
     | otherwise = find l a
 
+goToTheBeginning :: LinkedTree a -> LinkedTree a
+goToTheBeginning Pusto = Pusto
+goToTheBeginning tree @(Branch _ _ _ Pusto) = tree
+goToTheBeginning (Branch _ _ _ p) = goToTheBeginning p
+
 insert' Pusto v prev = Branch v Pusto Pusto prev
 insert' tree @(Branch v l r p) a prev
     | a == v = tree
@@ -21,7 +26,7 @@ insert' tree @(Branch v l r p) a prev
           left = Branch v (insert' l a left) r prev
 
 insert :: (Ord a) => LinkedTree a -> a -> LinkedTree a
-insert tree a = insert' tree a Pusto
+insert tree a = insert' (goToTheBeginning tree) a Pusto
    
 setParent :: LinkedTree a -> LinkedTree a -> LinkedTree a
 setParent Pusto _ = Pusto
@@ -54,4 +59,4 @@ remove' tree @(Branch v l r p) a prev
           left = Branch v (remove' l a left) r prev
 
 remove :: (Ord a) => LinkedTree a -> a -> LinkedTree a
-remove tree a = remove' tree a Pusto
+remove tree a = remove' (goToTheBeginning tree) a Pusto
