@@ -22,8 +22,8 @@ insert' tree @(Branch v l r p) a prev
     | a == v = tree
     | a > v = right
     | otherwise = left
-    where right = Branch v l (insert' r a right) prev
-          left = Branch v (insert' l a left) r prev
+    where right = Branch v (setParent l right) (insert' r a right) prev
+          left = Branch v (insert' l a left) (setParent r left) prev
 
 insert :: (Ord a) => LinkedTree a -> a -> LinkedTree a
 insert tree a = insert' (goToTheBeginning tree) a Pusto
@@ -55,8 +55,8 @@ remove' tree @(Branch v l r p) a prev
     | a == v = makeRes r l prev
     | a > v = right
     | otherwise = left
-    where right = Branch v l (remove' r a right) prev
-          left = Branch v (remove' l a left) r prev
+    where right = Branch v (setParent l right) (remove' r a right) prev
+          left = Branch v (remove' l a left) (setParent r left) prev
 
 remove :: (Ord a) => LinkedTree a -> a -> LinkedTree a
 remove tree a = remove' (goToTheBeginning tree) a Pusto
