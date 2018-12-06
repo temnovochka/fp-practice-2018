@@ -34,11 +34,16 @@ index DNil _ = error "404"
 index (DCons l c r) i | i == 0 = c
                       | otherwise = index r $ i-1
 
+goToTheBeginning :: DList a -> DList a
+goToTheBeginning DNil = DNil
+goToTheBeginning list @(DCons DNil _ _) = list
+goToTheBeginning (DCons l _ _) = goToTheBeginning l
+
 insertAt :: DList a -> Int -> a -> DList a
-insertAt list index value = append list value DNil index
+insertAt list index value = append (goToTheBeginning list) value DNil index
 
 removeAt :: DList a -> Int -> DList a
-removeAt list index = remove list DNil index
+removeAt list index = remove (goToTheBeginning list) DNil index
 
 remove DNil _ _ = DNil
 remove list @(DCons _ _ DNil) _ ind
