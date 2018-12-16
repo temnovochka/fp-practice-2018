@@ -1,19 +1,31 @@
-module Parsers where
+module Task8 where
 
 import Text.Parsec hiding(digit)
 
 type Parser a = Parsec String () a
 
 digit :: Parser Char
-digit = oneOf $ ['0'..'9']
+digit = oneOf $ ['0'..'9'] 
 
-number :: Parser Integer
-number = read <$> many1 digit
+intNum :: Parser String
+intNum = many1 digit
+
+floatPart :: Parser String
+floatPart = do
+                char '.'
+                res <- many1 digit
+                return $ ('.':res)
+
+number :: Parser Float
+number = do
+            num <- intNum
+            opt <- option "" floatPart
+            return $ read $ (num ++ opt)
 
 byNumber :: Char 
-                    -> (Integer -> Integer -> Integer) 
-                    -> Parser Integer
-                    -> Parser (Integer -> Integer)
+                    -> (Float -> Float -> Float) 
+                    -> Parser Float
+                    -> Parser (Float -> Float)
 byNumber symbol func base =
                     do
                         char symbol
@@ -22,33 +34,54 @@ byNumber symbol func base =
                         spaces
                         return $ (`func` n)
 
-multNumber :: Parser (Integer -> Integer)
-multNumber = byNumber '*' (*) expr
+unMinusNumber :: Parser Float
+unMinusNumber = do
+                    res <- byNumber '-' (-) expr
+                    return $ res 0
 
-divNumber :: Parser (Integer -> Integer)
-divNumber = byNumber '/' div expr
+unMinus :: Parser Float
+unMinus = do
+            spaces
+            ys <- (unMinusNumber <|> expr)
+            return $ ys
 
-multiplication :: Parser Integer
+powNumber :: Parser (Float -> Float)
+powNumber = byNumber '^' (**) unMinus
+
+power :: Parser Float
+power = do
+            x <- unMinus
+            spaces
+            ys <- many (powNumber)
+            return $ foldl (\ x f -> f x) x ys
+
+multNumber :: Parser (Float -> Float)
+multNumber = byNumber '*' (*) power
+
+divNumber :: Parser (Float -> Float)
+divNumber = byNumber '/' (/) power
+
+multiplication :: Parser Float
 multiplication = do
-                    x <- expr
+                    x <- power
                     spaces
                     ys <- many (multNumber <|> divNumber)
                     return $ foldl (\ x f -> f x) x ys
 
-plusNumber :: Parser (Integer -> Integer)
+plusNumber :: Parser (Float -> Float)
 plusNumber = byNumber '+' (+) multiplication
 
-minusNumber :: Parser (Integer -> Integer)
+minusNumber :: Parser (Float -> Float)
 minusNumber = byNumber '-' (-) multiplication
 
-addition :: Parser Integer
+addition :: Parser Float
 addition = do
                 x <- multiplication
                 spaces
                 ys <- many (plusNumber <|> minusNumber)
                 return $ foldl (\ x f -> f x) x ys
 
-expr :: Parser Integer
+expr :: Parser Float
 expr = number 
         <|> do 
                 char '('
@@ -58,7 +91,7 @@ expr = number
                 spaces
                 return $ res
 
-root :: Parser Integer
+root :: Parser Float
 root = do
             spaces
             p <- addition
@@ -69,4 +102,4 @@ main =
         do
             s <- getLine
             putStrLn $ show $ parse root "<input>" s
-main
+            main
