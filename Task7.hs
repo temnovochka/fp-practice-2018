@@ -11,6 +11,7 @@ empty = Deque [] 0 [] 0
 qBalance :: Deque a -> Deque a
 qBalance q @(Deque [] 0 [] 0) = q
 qBalance q @(Deque l lenl r lenr)
+    | lenl == 0 && lenr == 1 = q
     | lenl >= 2 * lenr = Deque l1 len1 (r ++ reverse l2) len2
     | lenr >= 2 * lenl = Deque (l ++ reverse r2) len2 r1 len1
     | otherwise = q
@@ -43,21 +44,3 @@ popBack (Deque [] 0 [] 0) = error "404 empty"
 popBack (Deque [el] 1 [] 0) = (el, empty)
 popBack (Deque l lenl [el] 1) = (el, qBalance $ Deque l lenl [] 0)
 popBack (Deque l lenl (h:t) lenr) = (h, qBalance $ Deque l lenl t (lenr - 1))
-
-{-
-Метод банкира:
-1. Пустая очередь, на счету 0
-    [], []
-2. Добавили в начало 1 элемент, на счету k-1 (+k за добавление, -1 за перекидывание)
-    [], [a]
-3. Добавили в начало еще 1 элемент, на счету 2k-1 (+k за добавление)
-    [a], [a]
-4. Добавили в начало еще 1 элемент, на счету 3k-4 (+k за добавление, -3 за перекидывание)
-    [a], [a, a]
-5. Удалили из начала 1 элемент, на счету 3k-6-m (-m за удаление, -2 за перекидывание)
-    [a], [a]
-6. Удалили из начала 1 элемент, на счету 3k-7-2m (-m за удаление, -1 за перекидывание)
-    [a], []
-7. Удалили из начала 1 элемент, на счету 3k-7-3m (-m за удаление)
-    [], []
--}
